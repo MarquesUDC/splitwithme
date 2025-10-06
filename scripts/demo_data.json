@@ -1,0 +1,24 @@
+
+{
+  "friends": [
+    {"id": "u1", "name": "Ana"},
+    {"id": "u2", "name": "Luis"},
+    {"id": "u3", "name": "Mar"}
+  ],
+  "expenses": [
+    {
+      "id": "e1",
+      "description": "Cena",
+      "date": "2025-06-24",
+      "amount": 90.0,
+      "participants": ["u1", "u2", "u3"]
+    },
+    {
+      "id": "e2",
+      "description": "Museo",
+      "date": "2025-06-22",
+      "amount": 30.0,
+      "participants": ["u1", "u3"]
+    }
+  ]
+}
