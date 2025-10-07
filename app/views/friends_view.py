@@ -1,125 +1,132 @@
-
-
 import gi
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 from app.presenters.friends_presenter import FriendsPresenter
 
+
 class FriendsView(Gtk.Box):
     """
-    Vista de Amigos:
-    - Búsqueda por nombre
-    - Lista de amigos
-    - Panel de detalle (datos + balances)
-    - Lista de gastos del amigo
+    Vista de Amigos modernizada:
+    - Búsqueda de amigos
+    - Lista visual con nombre, usuario y balances (Debit / Credit)
+    - Sin opción de añadir amigo
     """
     def __init__(self, api_client):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10,
                          margin_top=12, margin_bottom=12, margin_start=12, margin_end=12)
 
         self.presenter = FriendsPresenter(self, api_client)
-        self._friends_data = []  # cache simple
+        self._friends_data = []
 
-        # Barra superior: búsqueda + botón recargar
-        top = Gtk.Box(spacing=8)
-        self.search_entry = Gtk.Entry(placeholder_text="Buscar amigo...")
-        btn_search = Gtk.Button(label="Buscar")
+        # --- Barra superior (búsqueda) ---
+        top_bar = Gtk.Box(spacing=8)
+        self.search_entry = Gtk.Entry(placeholder_text="Search for your friend")
+        btn_search = Gtk.Button(label="Search")
         btn_search.connect("clicked", self.on_search_clicked)
-        btn_reload = Gtk.Button(label="Recargar")
+
+        btn_reload = Gtk.Button(label="Reload")
         btn_reload.connect("clicked", self.on_reload_clicked)
-        top.append(self.search_entry)
-        top.append(btn_search)
-        top.append(btn_reload)
 
-        # Panel central: lista (izquierda) + detalle (derecha)
-        center = Gtk.Box(spacing=10)
+        top_bar.append(self.search_entry)
+        top_bar.append(btn_search)
+        top_bar.append(btn_reload)
 
-        # Lista de amigos
+        # --- Contenedor principal de contenido ---
+        self.content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
+
+        # Título
+        title = Gtk.Label(label="List of friends")
+        title.set_xalign(0)
+        title.add_css_class("section-title")
+        self.content_box.append(title)
+
+        # Scrolled window para lista de amigos
         self.list_box = Gtk.ListBox()
+        self.list_box.add_css_class("friends-list")
         self.list_box.connect("row_selected", self.on_row_selected)
-        sc_left = Gtk.ScrolledWindow(hexpand=True, vexpand=True)
-        sc_left.set_child(self.list_box)
 
-        # Detalle del amigo
-        right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.friend_detail = Gtk.TextView(editable=False, monospace=True, hexpand=True, vexpand=True)
-        sc_detail = Gtk.ScrolledWindow()
-        sc_detail.set_child(self.friend_detail)
+        scrolled = Gtk.ScrolledWindow(hexpand=True, vexpand=True)
+        scrolled.set_child(self.list_box)
+        self.content_box.append(scrolled)
 
-        # Gastos del amigo
-        self.friend_expenses = Gtk.TextView(editable=False, monospace=True, hexpand=True, vexpand=True)
-        sc_exp = Gtk.ScrolledWindow()
-        sc_exp.set_child(self.friend_expenses)
-
-        right.append(Gtk.Label(label="Detalle del amigo"))
-        right.append(sc_detail)
-        right.append(Gtk.Label(label="Gastos del amigo"))
-        right.append(sc_exp)
-
-        center.append(sc_left)
-        center.append(right)
-
-        # Mensajes
+        # Estado / mensajes
         self.status = Gtk.Label(xalign=0)
+        self.status.add_css_class("status-label")
 
-        # Montaje
-        self.append(top)
-        self.append(center)
+        # Montaje final
+        self.append(top_bar)
+        self.append(self.content_box)
         self.append(self.status)
 
-        # Cargar inicial
+        # Carga inicial
         self.presenter.load_friends()
 
-    # ---- Callbacks ----
+    # --- Callbacks ---
     def on_search_clicked(self, _btn):
-        self.presenter.load_friends(self.search_entry.get_text())
+        query = self.search_entry.get_text().strip()
+        self.presenter.load_friends(query if query else None)
 
     def on_reload_clicked(self, _btn):
         self.search_entry.set_text("")
         self.presenter.load_friends()
 
     def on_row_selected(self, _listbox, row):
-        if not row: 
+        if not row:
             return
         idx = row.get_index()
         friend = self._friends_data[idx]
         self.presenter.select_friend(friend.get("id"))
 
-    # ---- Métodos llamados por el Presenter ----
+    # --- Métodos llamados por el Presenter ---
     def show_friends(self, friends):
         self._friends_data = friends or []
-        # Limpiar lista previa (GTK4 no tiene foreach)
-        for row in list(self.list_box):
-             self.list_box.remove(row)
 
+        # Limpiar lista previa
+        for row in list(self.list_box):
+            self.list_box.remove(row)
+
+        # Crear filas con nombre + usuario + balances
         for f in self._friends_data:
             name = f.get("name", f"Amigo {f.get('id')}")
-            balance = f.get("credit_balance")
-            label = f"{name} (saldo: {balance})" if balance is not None else name
-            self.list_box.append(Gtk.Label(label=label, xalign=0))
-        self.list_box.show()
+            username = f.get("username", f"user{f.get('id')}")
+            debit = f.get("debit_balance", 0)
+            credit = f.get("credit_balance", 0)
 
-        self.status.set_text(f"{len(self._friends_data)} amigo(s)")
+            # Fila contenedora
+            row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+            row_box.add_css_class("friend-row")
+
+            lbl_name = Gtk.Label(label=name, xalign=0)
+            lbl_name.add_css_class("friend-name")
+
+            lbl_user = Gtk.Label(label=username, xalign=0)
+            lbl_user.add_css_class("friend-username")
+
+            lbl_debit = Gtk.Label(label=f"Debit: {debit}€")
+            lbl_debit.add_css_class("debit-label")
+
+            lbl_credit = Gtk.Label(label=f"Credit: {credit}€")
+            lbl_credit.add_css_class("credit-label")
+
+            # Empaquetar
+            row_box.append(lbl_name)
+            row_box.append(lbl_user)
+            row_box.append(lbl_debit)
+            row_box.append(lbl_credit)
+
+            self.list_box.append(row_box)
+
+        self.list_box.show()
+        self.status.set_text(f"{len(self._friends_data)} friend(s) loaded")
 
     def show_friend_detail(self, friend):
-        txt = []
-        for k in ("id", "name", "credit_balance", "debit_balance", "net_balance", "num_expenses"):
-            if k in friend:
-                txt.append(f"{k}: {friend[k]}")
-        self._set_text(self.friend_detail, "\n".join(txt) or "—")
+        # Mantener compatibilidad para presenter
+        pass
 
     def show_friend_expenses(self, expenses):
-        # expenses: lista de objetos con id, description, amount, date, etc.
-        lines = []
-        for e in expenses or []:
-            lines.append(f"[{e.get('id')}] {e.get('date','?')}  {e.get('description','')}  — {e.get('amount')}€  (amigos: {e.get('num_friends')})")
-        self._set_text(self.friend_expenses, "\n".join(lines) if lines else "—")
+        pass
 
     def show_error(self, message: str):
         self.status.set_text(message)
 
-    # ---- Util ----
-    def _set_text(self, textview: Gtk.TextView, text: str):
-        buf = textview.get_buffer()
-        buf.set_text(text or "")

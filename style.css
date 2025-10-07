@@ -1,0 +1,252 @@
+/* ================================
+   SplitWithMe - GTK Modern Theme
+   ================================ */
+
+/* === General === */
+window {
+    background: #fafafa;
+    font-family: "Segoe UI", "Cantarell", "Ubuntu", sans-serif;
+    color: #333;
+}
+
+/* === Sidebar === */
+.sidebar {
+    background: #0d47a1;
+    padding: 20px;
+}
+
+.sidebar-title {
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 30px;
+}
+
+.sidebar-button {
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    border: none;
+    padding: 10px 0;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.sidebar-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* === Inputs y botones === */
+entry {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+button {
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #e0e0e0;
+}
+
+/* === Friends View === */
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.friends-list {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.friend-row {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.friend-name {
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 120px;
+}
+
+.friend-username {
+    color: #666;
+    font-size: 14px;
+    min-width: 100px;
+}
+
+.debit-label {
+    background: #e53935;
+    color: white;
+    border-radius: 6px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.credit-label {
+    background: #43a047;
+    color: white;
+    border-radius: 6px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* === Expenses View === */
+.top-bar {
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.create-expense-button {
+    background: #1976d2;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 6px 12px;
+    border: none;
+    transition: background 0.3s;
+}
+
+.create-expense-button:hover {
+    background: #1565c0;
+}
+
+.delete-expense-button {
+    background: #e53935;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 6px 12px;
+    border: none;
+    transition: background 0.3s;
+}
+
+.delete-expense-button:hover {
+    background: #c62828;
+}
+
+/* === Tabla de gastos === */
+.expenses-grid {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 16px;
+}
+
+/* Cabeceras */
+.table-header {
+    font-weight: bold;
+    color: #222;
+    font-size: 14px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 8px;
+    text-align: center;
+}
+
+/* Filas */
+.table-cell {
+    font-size: 14px;
+    color: #333;
+    padding: 10px 12px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Zebra stripes */
+.expenses-grid > *:nth-child(even) {
+    background-color: #fafafa;
+}
+
+/* Fila seleccionada */
+.table-row-selected {
+    background-color: #e3f2fd;
+    font-weight: 600;
+}
+
+/* Colores de amount */
+.amount-negative {
+    color: #e53935;
+    font-weight: 600;
+}
+
+.amount-positive {
+    color: #43a047;
+    font-weight: 600;
+}
+
+/* Tamaños relativos por tipo de columna (con más espacio) */
+.table-header:nth-child(1),
+.table-cell:nth-child(1) {
+    min-width: 60px;   /* ID */
+    max-width: 70px;
+}
+
+.table-header:nth-child(2),
+.table-cell:nth-child(2) {
+    min-width: 280px;  /* Description */
+    max-width: 350px;
+}
+
+.table-header:nth-child(3),
+.table-cell:nth-child(3) {
+    min-width: 150px;  /* Date */
+}
+
+.table-header:nth-child(4),
+.table-cell:nth-child(4) {
+    min-width: 130px;  /* Amount */
+}
+
+.table-header:nth-child(5),
+.table-cell:nth-child(5) {
+    min-width: 130px;  /* Credit */
+}
+
+.table-header:nth-child(6),
+.table-cell:nth-child(6) {
+    min-width: 100px;  /* Friends */
+}
+
+/* Estado */
+.status-label {
+    font-size: 13px;
+    color: #555;
+    margin-top: 8px;
+}
+
+/* === Scrollbars === */
+scrollbar {
+    border-radius: 8px;
+}
+
+scrollbar slider {
+    background-color: #bdbdbd;
+    border-radius: 8px;
+}
+
+scrollbar slider:hover {
+    background-color: #9e9e9e;
+}
+
